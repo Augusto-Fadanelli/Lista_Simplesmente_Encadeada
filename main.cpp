@@ -2,6 +2,16 @@
 #include <locale> // para o setlocale
 #include <stdlib.h> // para o system("cls"); (So funciona no windows)
 
+#ifdef __unix__
+
+	#define OS_UNIX
+
+#elif defined(_WIN32) || defined(WIN32)
+
+	#define OS_WINDOWS
+
+#endif
+
 using std::cout;
 using std::cin;
 using std::endl;
@@ -12,6 +22,8 @@ typedef struct no{
 }no;
 
 int menu();
+
+void clear();
 
 int main()
 {
@@ -48,7 +60,7 @@ int main()
             flag = 2;
         }
 
-        system("cls");
+        clear();
 
     }while(flag != 1);
 
@@ -67,5 +79,16 @@ int menu(){
     cout << "5 - Sair" << endl;
     cin >> op;
 
-    return op;
+	return op;
+}
+
+void clear(){
+
+	#ifdef OS_Windows
+	// Codigo Windows
+		system("cls");
+	#else
+	// Codigo GNU/Linux
+		system("clear");
+	#endif
 }

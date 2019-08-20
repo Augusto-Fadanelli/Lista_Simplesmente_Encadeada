@@ -22,7 +22,7 @@ typedef struct no{
 }no;
 
 int menu();
-//int inserir(no **);
+//no inserir();
 void clear();
 
 int main()
@@ -30,8 +30,11 @@ int main()
 
     setlocale(LC_ALL, "Portuguese");
 
-    no *novo;
-	*novo.valor = 0;
+    no *lista;
+	lista->prox = NULL;
+	no *novo = (no *)malloc(sizeof(no));
+
+	int num;
     int flag = 0;
 
     do{
@@ -44,16 +47,39 @@ int main()
         switch(menu()){
         case 1:
 		//inserir();
-		if(novo.valor==0){
+
+		cout << "Digite um Número inteiro para inserir na lista lista: ";
+		cin >> num;
+		cout << endl;
+
+		novo->valor=num;
+		novo->prox=lista;
+		lista=novo;
+		/*if(novo.valor==0){
 			novo.prox = NULL;
 		}else{
 			novo.prox = (no *) malloc(sizeof(no));
-		}
+		}*/
         break;
         case 2:
+		//excluir();
 
         break;
         case 3:
+		//pesquisar();
+
+		if(lista->prox == NULL){
+			cout << "Lista vazia!" << endl;
+		}else{
+			no *aux = lista;
+			do{
+
+			cout << aux->valor << endl;
+
+			aux = NULL;
+
+			}while(aux != NULL);
+		}
 
         break;
         case 4:

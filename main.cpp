@@ -22,7 +22,7 @@ typedef struct no{
 }no;
 
 int menu();
-
+//int inserir(no **);
 void clear();
 
 int main()
@@ -30,7 +30,8 @@ int main()
 
     setlocale(LC_ALL, "Portuguese");
 
-    no novo;
+    no *novo;
+	*novo.valor = 0;
     int flag = 0;
 
     do{
@@ -42,7 +43,12 @@ int main()
 
         switch(menu()){
         case 1:
-
+		//inserir();
+		if(novo.valor==0){
+			novo.prox = NULL;
+		}else{
+			novo.prox = (no *) malloc(sizeof(no));
+		}
         break;
         case 2:
 
@@ -81,6 +87,15 @@ int menu(){
 
 	return op;
 }
+
+/*(int inserir(int **Ptrrecebido){
+
+	if(Ptrvalor==0){
+		Ptrprox = NULL;
+	}else
+
+	return 0;
+}*/
 
 void clear(){
 

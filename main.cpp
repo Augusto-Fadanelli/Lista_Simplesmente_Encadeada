@@ -38,6 +38,8 @@ int main()
 	int num;
    	int flag = 0; //Flag para sair do loop
 
+   	no *aux;//usado em excluir e pesquisar
+
     do{
 
         switch(menu()){
@@ -64,11 +66,23 @@ int main()
         break;
         case 2:
 		//excluir();
+            int ind;
+            no *morta;
+            aux = novo;
+            cout << "Digite o índice do valor a ser excluido: ";
+            cin >> ind;
+
+            for(int i=0; i<ind-2; i++){
+                aux = aux->prox;
+            }
+            morta = aux->prox;
+            aux->prox = morta->prox;
+
 
 
         break;
         case 3:
-		//pesquisar();
+		//listar();
 
             if(lista == NULL){
                 cout << "Lista vazia!" << endl;
@@ -76,11 +90,16 @@ int main()
             }else{
                 cout << endl;
                 cout << endl;
-                no *aux = novo;
-                	do{				
-				cout << aux->valor << endl;
+                aux = novo;
+                int cont = 0;
+                	do{
+                        cout << cont+1 << "º "<< aux->valor << " | ";
                 		aux = aux->prox; //O ptr 'aux' agora vai apontar para o proximo valor
+                		cont++;
                 	}while(aux != NULL);
+                	cout << endl;
+                    cout << endl;
+                    cout << "A lista possui " << cont <<  " valores." << endl;
                 pause();
             }
 
@@ -112,7 +131,7 @@ int menu(){
     cout << "**LISTA SIMPLESMENTE ENCADEADA**" << endl;
     cout << "1 - Inserir" << endl;
     cout << "2 - Excluir" << endl;
-    cout << "3 - Pesquisar" << endl;
+    cout << "3 - Listar" << endl;
     cout << "4 - Limpar" << endl;
     cout << "5 - Sair" << endl;
     cin >> op;

@@ -25,8 +25,9 @@ typedef struct no{
 int menu();
 
 int inserir(int, no **, no **);
-void excluir(int *, no *, no **, no **);
+int inserirpos(int, no *, no **, no **);
 void listar(no *, no **);
+void excluir(int *, no *, no **, no **);
 
 void clear();
 void pause();
@@ -53,28 +54,33 @@ int main()
 
         break;
         case 2:
-            excluir(&cont, novo, &novo, &lista);
+        //Inserir por Posição
+            cont = inserirpos(cont, novo, &novo, &lista);
 
         break;
         case 3:
-		listar(novo, &lista);
-
-
+            listar(novo, &lista);
 
         break;
         case 4:
+            excluir(&cont, novo, &novo, &lista);
+
+        break;
+        case 5:
         //limpar();
             lista = NULL; //perde-se o local do ultimo valor informado
             novo = NULL;
             cont = 0;
+
         break;
-        case 5:
-        //Sair
-            flag = 1;
+        case 6:
+            flag =1;
+
         break;
         default:
             cout << "Opção inválida!" << endl;
             pause();
+
         }
 
         clear();
@@ -110,6 +116,34 @@ int inserir(int cont, no **novo, no **lista){
     return cont;
 }
 
+int inserirpos(int cont, no *aux, no **novo, no **lista){
+
+
+    return cont;
+}
+
+void listar(no *aux, no **lista){
+
+    if(*lista == NULL){
+        cout << "Lista vazia!" << endl;
+        pause();
+    }else{
+        cout << endl;
+        cout << endl;
+        int cont = 0;
+        do{
+            cout << cont+1 << "º "<< aux->valor << " | ";
+            aux = aux->prox; //O ptr 'aux' agora vai apontar para o proximo valor
+            cont++;
+        }while(aux != NULL);
+        cout << endl;
+        cout << endl;
+        cout << "A lista possui " << cont <<  " valores." << endl;
+        pause();
+    }
+
+}
+
 void excluir(int *cont, no *aux, no **novo, no **lista){
 
     int ind;
@@ -137,38 +171,17 @@ void excluir(int *cont, no *aux, no **novo, no **lista){
 
 }
 
-void listar(no *aux, no **lista){
-
-    if(*lista == NULL){
-        cout << "Lista vazia!" << endl;
-        pause();
-    }else{
-        cout << endl;
-        cout << endl;
-        int cont = 0;
-        do{
-            cout << cont+1 << "º "<< aux->valor << " | ";
-            aux = aux->prox; //O ptr 'aux' agora vai apontar para o proximo valor
-            cont++;
-        }while(aux != NULL);
-        cout << endl;
-        cout << endl;
-        cout << "A lista possui " << cont <<  " valores." << endl;
-        pause();
-    }
-
-}
-
 int menu(){
 
     int op;
 
     cout << "**LISTA SIMPLESMENTE ENCADEADA**" << endl;
-    cout << "1 - Inserir" << endl;
-    cout << "2 - Excluir" << endl;
+    cout << "1 - Inserir no Início" << endl;
+    cout << "2 - Inserir por Posição" << endl;
     cout << "3 - Listar" << endl;
-    cout << "4 - Limpar" << endl;
-    cout << "5 - Sair" << endl;
+    cout << "4 - Excluir por Posição" << endl;
+    cout << "5 - Limpar Lista" << endl;
+    cout << "6 - Sair" << endl;
     cin >> op;
 
 	return op;

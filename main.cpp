@@ -1,6 +1,6 @@
 #include <iostream>
 #include <locale> // para o setlocale
-#include <stdlib.h> // para o system("cls"); (So funciona no windows)
+#include <stdlib.h> // para o system("cls"); (So funciona no windows) // para o malloc
 
 //Verifica se o SO é GNU/Linux ou Windows
 #ifdef _unix_
@@ -25,9 +25,9 @@ typedef struct no{
 int menu();
 
 int inserir(int, no **, no **);
-int inserirpos(int, no *, no **, no **);
+int inserirpos(int, int, no *, no **, no **);
 void listar(no *, no **);
-void excluir(int *, no *, no **, no **);
+int excluir(int, no *, no **, no **);
 
 void clear();
 void pause();
@@ -42,6 +42,7 @@ int main()
 	no *novo;
 
 	int cont = 0;
+	int ind;
    	int flag = 0; //Flag para sair do loop
 
    	no *aux;//usado em excluir e pesquisar
@@ -55,15 +56,25 @@ int main()
         break;
         case 2:
         //Inserir por Posição
-            cont = inserirpos(cont, novo, &novo, &lista);
+            cout << "Digite o local a ser inserido: ";
+            cin >> ind;
+
+            if(ind == 1){
+                cont = inserir(cont, &novo, &lista);
+            }else if(ind > 0 && ind <= cont + 1){
+                cont = inserirpos(cont, ind, lista, &novo, &lista);
+            } else{
+                cout << "Posição inválida!" << endl;
+                pause();
+            }
 
         break;
         case 3:
-            listar(novo, &lista);
+            listar(lista, &lista);
 
         break;
         case 4:
-            excluir(&cont, novo, &novo, &lista);
+            cont = excluir(cont, lista, &novo, &lista);
 
         break;
         case 5:
@@ -116,8 +127,22 @@ int inserir(int cont, no **novo, no **lista){
     return cont;
 }
 
-int inserirpos(int cont, no *aux, no **novo, no **lista){
+int inserirpos(int cont, int ind, no *aux, no **novo, no **lista){
 
+    int num;
+    cout << "Digite um Número inteiro para inserir na lista lista: ";
+    cin >> num;
+
+    for(int i=1; i<ind-1; i++){
+        aux = aux->prox;
+    }
+    *novo = (no *)malloc(sizeof(no)); //O ponteiro 'novo' recebe o local indicado por malloc(); do tamanho definido por sizeof();
+
+    (*novo)->valor=num;
+    (*novo)->prox=aux->prox;
+    aux->prox=*novo;
+
+    cont++;
 
     return cont;
 }
@@ -144,14 +169,14 @@ void listar(no *aux, no **lista){
 
 }
 
-void excluir(int *cont, no *aux, no **novo, no **lista){
+int excluir(int cont, no *aux, no **novo, no **lista){
 
     int ind;
     no *morta;
     cout << "Digite o índice do valor a ser excluido: ";
     cin >> ind;
 
-    if(ind > 1 && ind <= *cont){ //Impede que um valor de um indice que não exista seja excluido (O que poderia causar uma falha de segmentação "Crashar")
+    if(ind > 1 && ind <= cont){ //Impede que um valor de um indice que não exista seja excluido (O que poderia causar uma falha de segmentação "Crashar")
         for(int i=0; i<ind-2; i++){
             aux = aux->prox;
         }
@@ -159,7 +184,7 @@ void excluir(int *cont, no *aux, no **novo, no **lista){
         aux->prox = morta->prox;
         cont--;
     }else{
-        if(ind == 1 && *cont != 0){ //Impede a execução caso não exista indice
+        if(ind == 1 && cont != 0){ //Impede a execução caso não exista indice
             *novo = aux->prox;
             *lista = *novo;
             cont--;
@@ -168,7 +193,8 @@ void excluir(int *cont, no *aux, no **novo, no **lista){
             pause();
         }
     }
-
+    
+	return cont;
 }
 
 int menu(){

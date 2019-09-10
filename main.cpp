@@ -24,10 +24,12 @@ typedef struct no{
 
 int menu();
 
-int inserir(int, no **, no **);
-int inserirpos(int, int, no *, no **, no **);
+int inserir(int, no **);
+int inserirpos(int, int, no *, no **);
 void listar(no *, no **);
-int excluir(int, no *, no **, no **);
+int excluir(int, no *, no **);
+
+int mallocVerify(no *, no *); //Verifica se malloc conseguiu encontrar um espaço de memória livre para no* novo
 
 void clear();
 void pause();
@@ -39,30 +41,28 @@ int main()
 
    	no *lista;
 	lista = NULL; //O primeiro valor da lista aponta para NULL
-	no *novo;
 
 	int cont = 0;
 	int ind;
    	int flag = 0; //Flag para sair do loop
 
-   	no *aux;//usado em excluir e pesquisar
-
     do{
 
         switch(menu()){
         case 1:
-            cont = inserir(cont, &novo, &lista);
+        //Inserir no início
+            cont = inserir(cont, &lista);
 
         break;
         case 2:
-        //Inserir por Posição
+        //Inserir por posição
             cout << "Digite o local a ser inserido: ";
             cin >> ind;
 
             if(ind == 1){
-                cont = inserir(cont, &novo, &lista);
+                cont = inserir(cont, &lista);
             }else if(ind > 0 && ind <= cont + 1){
-                cont = inserirpos(cont, ind, lista, &novo, &lista);
+                cont = inserirpos(cont, ind, lista, &lista);
             } else{
                 cout << "Posição inválida!" << endl;
                 pause();
@@ -70,22 +70,24 @@ int main()
 
         break;
         case 3:
+        //Listar
             listar(lista, &lista);
 
         break;
         case 4:
-            cont = excluir(cont, lista, &novo, &lista);
+        //Excluir por posição
+            cont = excluir(cont, lista, &lista);
 
         break;
         case 5:
         //limpar();
             lista = NULL; //perde-se o local do ultimo valor informado
-            novo = NULL;
             cont = 0;
 
         break;
         case 6:
-            flag =1;
+        //Sair
+            flag = 1;
 
         break;
         default:
@@ -101,48 +103,48 @@ int main()
     return 0;
 }
 
-int inserir(int cont, no **novo, no **lista){
+int inserir(int cont, no **lista){
 
+	no *novo;
     int num;
 
     cout << "Digite um Número inteiro para inserir na lista lista: ";
     cin >> num;
     cout << endl;
 
-    *novo = (no *)malloc(sizeof(no)); //O ponteiro 'novo' recebe o local indicado por malloc(); do tamanho definido por sizeof();
+    novo = (no *)malloc(sizeof(no)); //O ponteiro 'novo' recebe o local indicado por malloc(); do tamanho definido por sizeof();
 
-    if (*novo == NULL){ //Impede que o programa execute caso o malloc não consiga encontrar memória livre
-        cout << "Memória insuficiente!\n Tente fechar alguns programas ou reiniciar a máquina." << endl;
-        pause();
-        if(*lista == NULL){ // se novo e lista == NULL então nada foi adicionado na lista e o programa pode ser fechado
-            exit(1);
-        } // se a lista possuir elementos o programa não fecha, mesmo com o malloc não conseguindo encontrar espaços de memória livres
-    }else{
-        (*novo)->valor=num;
-        (*novo)->prox=*lista; //Lista inicialmente vale NULL, depois de ser inserido algum valor 'lista' vai ser igual ao ptr anterior
-        *lista=*novo;
-        cont++;
-    }
+	if(mallocVerify(novo, *lista) == 0){
+		novo->valor=num;
+        novo->prox=*lista; //Lista inicialmente vale NULL, depois de ser inserido algum valor 'lista' vai ser igual ao ptr anterior
+        *lista=novo;
+        
+		cont++;
+	}
 
     return cont;
 }
 
-int inserirpos(int cont, int ind, no *aux, no **novo, no **lista){
+int inserirpos(int cont, int ind, no *aux, no **lista){
 
-    int num;
+    no *novo;
+	int num;
+    
     cout << "Digite um Número inteiro para inserir na lista lista: ";
     cin >> num;
 
     for(int i=1; i<ind-1; i++){
         aux = aux->prox;
     }
-    *novo = (no *)malloc(sizeof(no)); //O ponteiro 'novo' recebe o local indicado por malloc(); do tamanho definido por sizeof();
-
-    (*novo)->valor=num;
-    (*novo)->prox=aux->prox;
-    aux->prox=*novo;
-
-    cont++;
+    novo = (no *)malloc(sizeof(no)); //O ponteiro 'novo' recebe o local indicado por malloc(); do tamanho definido por sizeof();
+    
+    if(mallocVerify(novo, *lista) == 0){
+    	novo->valor=num;
+    	novo->prox=aux->prox;
+    	aux->prox=novo;
+		
+		cont++;
+	}
 
     return cont;
 }
@@ -169,10 +171,12 @@ void listar(no *aux, no **lista){
 
 }
 
-int excluir(int cont, no *aux, no **novo, no **lista){
+int excluir(int cont, no *aux, no **lista){
 
+	no *novo;
+	no *morta;
     int ind;
-    no *morta;
+    
     cout << "Digite o índice do valor a ser excluido: ";
     cin >> ind;
 
@@ -185,8 +189,8 @@ int excluir(int cont, no *aux, no **novo, no **lista){
         cont--;
     }else{
         if(ind == 1 && cont != 0){ //Impede a execução caso não exista indice
-            *novo = aux->prox;
-            *lista = *novo;
+            novo = aux->prox;
+            *lista = novo;
             cont--;
         }else{
             cout << "Índice inválido!" << endl;
@@ -211,6 +215,22 @@ int menu(){
     cin >> op;
 
 	return op;
+}
+
+int mallocVerify(no *novo, no *lista){
+	
+	int flag = 0;
+	
+	 if (novo == NULL){ //Impede que o programa execute caso o malloc não consiga encontrar memória livre
+        cout << "Memória insuficiente!\n Tente fechar alguns programas ou reiniciar a máquina." << endl;
+        flag = 1;
+        pause();
+        if(lista == NULL){ // se novo e lista == NULL então nada foi adicionado na lista e o programa pode ser fechado
+            exit(1);
+        } // se a lista possuir elementos o programa não fecha, mesmo com o malloc não conseguindo encontrar espaços de memória livres
+    }
+	
+	return flag;
 }
 
 void clear(){
